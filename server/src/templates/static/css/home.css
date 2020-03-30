@@ -1,0 +1,217 @@
+/*Main Title: CraveRN*/
+.jumbotron{
+    background-color: dodgerblue;
+    color: white;
+    border-bottom-left-radius: 10em;
+    border-bottom-right-radius: 10em;
+
+}
+
+/*Main Background: Four food dishes*/
+body{
+    background-image: url("https://storage.googleapis.com/cravern/static/img/mainBackground.jpg");
+}
+
+/*Holds the four pictures*/
+.card{
+    background-color: white;
+    border-radius: 5em;
+    box-shadow: 0px 0px 20px lightslategrey;
+}
+
+.row{
+    margin-bottom: 5px;
+}
+input:focus, textarea:focus {
+    outline: none;
+}
+
+
+.mainpicture{
+    width:  25%;
+    margin-right: auto;
+    margin-left: 37.5%;
+    border-radius: 1em;
+}
+
+/*Mobile Devices*/
+@media screen and (orientation: portrait) {
+  .secondaryPicture{
+    width:  40%;
+    margin-bottom: 10px;
+    margin-right: auto;
+    border-radius: 1em;
+}
+    #JumboTitle{
+    font-size: 6em;
+    font-family: 'Handlee';
+}
+    input{
+    color: black;
+    border: transparent;
+    font-size: 1.1em;
+    width: 60%;
+}
+    .inputHolder{
+    background-color: white;
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 1em;
+        margin-bottom: 2em;
+    border-radius: .5em;
+    color: black;
+    display: flex;
+    height: 4em;
+    line-height: 4em;
+}
+
+}
+
+/*Laptops/Tablets*/
+@media screen and (orientation: landscape) {
+    .secondaryPicture{
+    width:  60%;
+    margin-bottom: 10px;
+    margin-right: auto;
+    border-radius: 1em;
+
+}
+    input{
+    color: black;
+    border: transparent;
+    font-size: 1.1em;
+    width: 82%;
+}
+    .inputHolder{
+    background-color: white;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 3em;
+    border-radius: .5em;
+    color: black;
+    display: flex;
+    height: 4em;
+    line-height: 4em;
+}
+    #JumboTitle{
+    font-size: 7em;
+    font-family: 'Handlee';
+}
+}
+
+/*Four pictures for quiz*/
+#secondaryPictureTopLeft{
+    margin-left: 2em;
+    float: left;
+}
+#secondaryPictureTopRight{
+    margin-right: 2em;
+    float: right;
+}
+#secondaryPictureBottomLeft{
+    margin-left: 2em;
+    float: left;
+}
+#secondaryPictureBottomRight{
+    margin-right: 2em;
+    float: right;
+}
+
+
+
+#cravingTitle{
+    text-align: left;
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 1.1em;
+    width: 100px;
+    margin-right: 10px;
+}
+
+
+
+.gameDescription{
+     font-family: 'Handlee';
+    text-align: center;
+}
+
+#subtitle{
+    font-size: 2em;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: black;
+     width:  40%;
+    margin-bottom: 10px;
+    margin-right: auto;
+    border-radius: 1em;
+}
+
+
+input[type="image" i]:hover {
+    opacity: 0.8;
+    -moz-transition: all 0.4s ease-out;
+    -o-transition: all 0.4s ease-out;
+    -webkit-transition: all 0.4s ease-out;
+    -ms-transition: all 0.4s ease-out;
+    transition: all 0.4s ease-out;
+}
+
+
+input[type="image" i]:active {
+    opacity: 0.8;
+    -moz-transition: all 0.4s ease-out;
+    -o-transition: all 0.4s ease-out;
+    -webkit-transition: all 0.4s ease-out;
+    -ms-transition: all 0.4s ease-out;
+    transition: all 0.4s ease-out;
+}
+
+.containerTXT:hover .overlay {
+  opacity: .5;
+
+}
+
+.text {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+
+}
+input.btn[type="image"]:hover{
+    display: none;
+}
+
+#RN{
+    margin-top: 10px;
+    height: 35px;
+    width: 45px;
+    margin-right: 12.5px;
+    border-radius: 15px;
+    float: right;
+}
+input:focus{
+    outline: dot-dot-dash;
+}

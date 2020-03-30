@@ -1,0 +1,322 @@
+
+<!-- Home Page -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CraveRN</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' href='https://storage.googleapis.com/cravern/static/img/rn.png' type='image/x-icon'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://storage.googleapis.com/cravern/static/css/home.css">
+<!--   <link rel="stylesheet" href="static/css/home.css">-->
+    <link href="https://fonts.googleapis.com/css?family=Handlee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merienda&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Top Jumbotron Header -->
+<div class="jumbotron text-center">
+    <h1 id="JumboTitle">Crave <span style="font-weight: bolder; font-style: italic">RN</span></h1>
+    <p id="subtitle" class="subtitle">Your Cravings Satisfied <br><i>Right Now!</i></p>
+    <div class="inputHolder inline">
+        <p id="cravingTitle">I'm Craving</p>
+        <input id="searchTermInput" placeholder="Tacos, Deep Dish, Sandwiches">
+        <input id="RN" onclick="showResultsSearch()" type="image"
+               src="https://storage.googleapis.com/cravern/static/img/rn.png">
+    </div>
+</div>
+
+<!-- Bottom Four Pictures -->
+<div class="container card">
+    <h1 class="gameDescription">Click the pictures below to find what you crave!</h1>
+    <img class="mainpicture" src="">
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="image" name="" onClick="topLeftClick()" class="secondaryPicture ripple" id="secondaryPictureTopLeft"
+                   src="">
+
+        </div>
+        <div class="col-sm-6">
+            <input type="image" name="" onClick="topRightClick()" class="secondaryPicture" id="secondaryPictureTopRight"
+                   src="">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="image" name="mainDish" onClick="bottomLeftClick()" class="secondaryPicture"
+                   id="secondaryPictureBottomLeft" src="">
+        </div>
+        <div class="col-sm-6">
+            <input type="image" name="drinks" onClick="bottomRightClick()" class="secondaryPicture"
+                   id="secondaryPictureBottomRight" src="">
+        </div>
+    </div>
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-app.js"></script>
+
+<!-- Firebase SDKs
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-analytics.js"></script>
+
+<script>
+    // Firebase Config:
+    var firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "cravern.firebaseapp.com",
+        databaseURL: "https://cravern.firebaseio.com",
+        projectId: "cravern",
+        storageBucket: "cravern.appspot.com",
+        messagingSenderId: "ID",
+        appId: "APPID",
+        measurementId: "G-0STQ1YRR0S"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+</script>
+</body>
+
+<script>
+    // Array to hold the user's choices
+    let choices = [];
+
+    // Stores an instance of the database
+    let databaseVals;
+
+    // Stores a dictionary of image names to their URLS
+    let urls;
+
+    // Round Number
+    let counter = 1;
+
+    // Call Initialize after the database is accesseed
+    let databaseAccessed = fetchData().then(initialize);
+
+    // Returns results after enter is clicked
+    document.getElementById("searchTermInput").onkeypress = function(event){
+    if (event.key == "Enter" && document.getElementById("searchTermInput").value != ""){
+        showResultsSearch();
+    }
+};
+    // Get Data and URLs from the database
+    function fetchData() {
+        const database = firebase.database();
+        return firebase.database().ref('/').once('value').then(function (snapshot) {
+            databaseVals = (snapshot.val());
+            urls = databaseVals['URLS'];
+            initialize();
+            return databaseVals;
+        });
+    }
+
+    // Get the next labels to get the next pictures
+    function getNextLabel(prevLabel, counter, position) {
+        let label;
+        if (counter != 2) {
+            label = databaseVals['round' + counter][position];
+        } else {
+            label = databaseVals['round' + counter][prevLabel][position];
+        }
+        return label;
+    }
+
+    // Initialize the first four labels/pictures
+    function initialize() {
+        let counter = 1;
+        let label1 = getNextLabel(null, counter, 0);
+        let label2 = getNextLabel(null, counter, 1);
+        let label3 = getNextLabel(null, counter, 2);
+        let label4 = getNextLabel(null, counter, 3);
+        updateFourPictures(label1, label2, label3, label4);
+    }
+
+    // Update the four pictures to the next four based off of the new labels
+    function updateFourPictures(label1, label2, label3, label4) {
+        document.getElementById("secondaryPictureTopLeft").name = label1;
+        let url1 = urls[label1];
+        document.getElementById("secondaryPictureTopLeft").src = url1;
+        document.getElementById("secondaryPictureTopRight").name = label2;
+        let url2 = urls[label2];
+        document.getElementById("secondaryPictureTopRight").src = url2;
+        document.getElementById("secondaryPictureBottomLeft").name = label3;
+        let url3 = urls[label3];
+        document.getElementById("secondaryPictureBottomLeft").src = url3;
+        document.getElementById("secondaryPictureBottomRight").name = label4;
+        let url4 = urls[label4];
+        document.getElementById("secondaryPictureBottomRight").src = url4;
+    }
+
+    // Get the next four labels and update the next four pictures
+    function getNextLabelsAndPictures(prevLabel) {
+        counter = counter + 1;
+        let currLabelTL = getNextLabel(prevLabel, counter, 0);
+        let currLabelTR = getNextLabel(prevLabel, counter, 1);
+        let currLabelBL = getNextLabel(prevLabel, counter, 2);
+        let currLabelBR = getNextLabel(prevLabel, counter, 3);
+        updateFourPictures(currLabelTL, currLabelTR, currLabelBL, currLabelBR);
+    }
+
+    // If the the top left picture is clicked, store the label and get the next four
+    function topLeftClick() {
+        console.log("Top Left Clicked!");
+        let prevLabel = document.getElementById("secondaryPictureTopLeft").name;
+        choices.push(prevLabel);
+        if (counter < 6) {
+            getNextLabelsAndPictures(prevLabel);
+        } else {
+            showResults(choices);
+        }
+        console.log(choices);
+    }
+
+    // If the the top right picture is clicked, store the label and get the next four
+    function topRightClick() {
+        console.log("Top Right Clicked!");
+        let prevLabel = document.getElementById("secondaryPictureTopRight").name;
+        choices.push(prevLabel);
+        if (counter < 6) {
+            getNextLabelsAndPictures(prevLabel);
+        } else {
+            showResults(choices);
+        }
+        console.log(choices);
+    }
+
+    // If the the bottom left picture is clicked, store the label and get the next four
+    function bottomLeftClick() {
+        console.log("Bottom Left Clicked!");
+        let prevLabel = document.getElementById("secondaryPictureBottomLeft").name;
+        choices.push(prevLabel);
+        if (counter < 6) {
+            getNextLabelsAndPictures(prevLabel);
+        } else {
+            showResults(choices);
+        }
+        console.log(choices);
+    }
+
+    // If the the bottom right picture is clicked, store the label and get the next four
+    function bottomRightClick() {
+        console.log("Bottom Right Clicked!");
+        let prevLabel = document.getElementById("secondaryPictureBottomRight").name;
+        choices.push(prevLabel);
+        if (counter < 6) {
+            getNextLabelsAndPictures(prevLabel);
+        } else {
+            showResults(choices);
+        }
+        console.log(choices);
+    }
+
+    // Show results if user types query and clicks enter or "RN"
+    function showResultsSearch() {
+        let searchTerm = document.getElementById("searchTermInput").value;
+
+        //Example JsonData based off of user selection
+       /* let jsonData = {
+            "typeOfMeal": null,
+            "specificMeal": searchTerm,
+            "price": null,
+            "restaurantType": null,
+            "dietaryRestriction": null,
+            "distance": null,
+            "latitude": "{{ latitude }}",
+            "longitude": "{{ longitude }}",
+            "city": "{{ city }}",
+            "state": "{{ state }}"
+        };
+        console.log(jsonData);*/
+
+        //Call the results get endpoint with the following query
+        let queryString =
+            window.location.href +
+            "results?" +
+            "typeOfMeal=" +  "null" +
+            "&specificMeal=" + searchTerm +
+            "&restaurantType=" + "null" +
+            "&dietaryRestriction=" + "null" +
+            "&latitude=" + "{{ latitude }}" +
+            "&longitude=" + "{{longitude}}" +
+            "&city=" + "{{city}}" +
+            "&state=" + "{{state}}" +
+            "&price=" + "null" +
+            "&distance=" + "null" +
+            "&sort_by=" + "best_match";
+        console.log(queryString);
+        window.location.href = queryString;
+
+        //Future POST request format
+        /*let settings = {
+            "url": queryString,
+            "method": "POST",
+            "timeout": 0,
+        };
+        $.ajax(settings).done(function (response) {
+            location.reload();
+        });*/
+
+
+    }
+
+    // Show Results based on results from four picture quiz
+    function showResults(choices) {
+        //Take data from the array of choices
+        let typeOfMeal = choices[0];
+        let specificMeal = choices[1];
+        let price = choices[2];
+        let restaurantType = choices[3];
+        let dietaryRestriction = choices[4];
+        let distance = choices[5];
+
+        //Example JsonData from Choices
+        /*let jsonData = {
+            "typeOfMeal": typeOfMeal,
+            "specificMeal": specificMeal,
+            "price": price,
+            "restaurantType": restaurantType,
+            "dietaryRestriction": dietaryRestriction,
+            "distance": distance,
+            "latitude": "{{ latitude }}",
+            "longitude": "{{ longitude }}",
+            "city": "{{ city }}",
+            "state": "{{ state }}"
+        };
+        console.log(jsonData);*/
+        //Call the results get endpoint with the following query
+        let queryString =  window.location.href +
+            "results?" +
+            "typeOfMeal=" + typeOfMeal +
+            "&specificMeal=" + specificMeal +
+            "&restaurantType=" + restaurantType +
+            "&dietaryRestriction=" + dietaryRestriction +
+            "&latitude=" + "{{ latitude }}" +
+            "&longitude=" + "{{longitude}}" +
+            "&city=" + "{{city}}" +
+            "&state=" + "{{state}}" +
+            "&price=" + price +
+            "&distance=" + distance +
+            "&sort_by=" + "best_match";
+        console.log(queryString);
+        window.location.href = queryString;
+
+        //Sample post request for future post implementation
+        /*let settings = {
+            "url": queryString,
+            "method": "POST",
+            "timeout": 0,
+        };
+        $.ajax(settings).done(function (response) {
+            location.reload();
+        });*/
+
+    }
+</script>
+
+</html>

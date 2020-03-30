@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href=https://storage.googleapis.com/cravern/static/css/results.css>
+    <!-- <link rel="stylesheet" href="static/css/results.css">-->
+    <link rel='icon' href='https://storage.googleapis.com/cravern/static/img/rn.png' type='image/x-icon'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+</head>
+<body class="filters">
+<div style="display: inline">
+    <div class="row">
+        <div class="col-sm-4">
+            <p class="headerOption">Distance: </p>
+            <select id="distance" name="Distance" onchange="searchResults()">
+                <option value="1mi">1 Mi.</option>
+                <option value="5mi">5 Mi.</option>
+                <option value="10mi">10 Mi.</option>
+                <option value="20mi">20 Mi.</option>
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <p class="headerOption">Price: </p>
+            <select id="price" name="Price" onchange="searchResults()">
+                <option value="1">$</option>
+                <option value="2">$$</option>
+                <option value="3">$$$</option>
+                <option value="4">$$$$</option>
+                <option value="null">All</option>
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <p class="headerOption">Sort By: </p>
+            <select id="sortBy" name="SortBy" onchange="searchResults()">
+                <option value="best_match">Best Match</option>
+                <option value="rating">Rating</option>
+                <option value="review_count">Review Count</option>
+                <option value="distance">Distance</option>
+
+            </select>
+        </div>
+  <!--      <div class="col-sm-3">
+            <button onclick="searchResults()" class="updateButton">Submit</button>
+        </div>-->
+    </div>
+</div>
+<div class="resultsAndMap">
+    <div id="resultsContainer">
+        <!--
+        Sample Entry:
+        <div class="container card">
+             <div class="imgHolder"> <img class="restaurantPic" src="https://s3-media1.fl.yelpcdn.com/bphoto/N_5acEL5lQONzfu8G3RFiA/o.jpg"></div>
+             <div class="contentHolder">
+                 <div><a class="restaurantName" href="https://www.yelp.com/biz/fricanos-deli-austin-15?adjust_creative=RGGnPrwZxPCJp56LrKgMKw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=RGGnPrwZxPCJp56LrKgMKw">Fricanos</a>
+                 </div>
+                 <div>
+                     <div class="star-ratings-sprite"><span style="width:80%" class="star-ratings-sprite-rating"></span></div><span class="reviewCount">500</span></div>
+                 <p><span class="price">$ | </span> <span class="category">Sandwiches, Deli</span></p>
+                 <div class="location"><span>0.4 mi. | </span> <a href="https://www.google.com/maps/place/2405 Nueces St" class="restaurantAddress">2405 Nueces St</a></div>
+                  <p class="phoneNumber">972-869-3429</p>
+             </div>
+         </div>-->
+    </div>
+    <div id="map"></div>
+</div>
+<script>
+    // Set the results passed in through flask to a dictionary
+    let restaurantResults = {{ results | safe }};
+    let businesses = restaurantResults.businesses;
+
+    //Update the price, distance, and sortBy select boxes to match the query
+    showPriceDistanceAndSearchMethod();
+
+    //Display the restaurants that match the query
+    displayResults();
+
+
+    function showPriceDistanceAndSearchMethod() {
+        //Get current query
+        let currURL = window.location.href;
+        let priceLoc = currURL.indexOf("price");
+
+        //Remove the beginning part of the url that is irrelevent
+        let params = currURL.substring(priceLoc, currURL.length);
+        // Will look like "price=2&distance=5mi&sort_by=null"
+
+        //Get the values for price, distance, and sort by
+        let priceEqualsIndex = params.indexOf("=");
+        let priceAndIndex = params.indexOf("&");
+        let price = params.substring(priceEqualsIndex + 1, priceAndIndex);
+        params = params.substring(priceAndIndex + 1, params.length);
+        let distanceEqualsIndex = params.indexOf("=");
+        let distanceAndIndex = params.indexOf("&");
+        let distance = params.substring(distanceEqualsIndex + 1, distanceAndIndex);
+        params = params.substring(distanceAndIndex + 1, params.length);
+        let sortbyEqualsIndex = params.indexOf("=");
+        let sortBy = params.substring(sortbyEqualsIndex + 1, params.length);
+
+        //Update the select boxes to match the values in the queries
+        if (distance == "1mi"){
+            document.getElementById("distance").selectedIndex = "0";
+        }
+        else if (distance == "5mi"){
+            document.getElementById("distance").selectedIndex = "1";
+        }
+        else if (distance == "10mi"){
+            document.getElementById("distance").selectedIndex = "2";
+        }
+         else if (distance == "20mi"){
+            document.getElementById("distance").selectedIndex = "3";
+        }
+         else {
+            document.getElementById("distance").selectedIndex = "2";
+        }
+        if (price == "null") {
+            document.getElementById("price").selectedIndex = "4";
+        }
+        else {
+            document.getElementById("price").selectedIndex = (parseInt(price)-1+"");
+        }
+         if (sortBy == "best_match"){
+            document.getElementById("sortBy").selectedIndex = "0";
+        }
+        else if (sortBy == "rating"){
+            document.getElementById("sortBy").selectedIndex = "1";
+        }
+        else if (sortBy == "review_count"){
+            document.getElementById("sortBy").selectedIndex = "2";
+        }
+         else if (sortBy == "distance"){
+            document.getElementById("sortBy").selectedIndex = "3";
+        }
+    }
+
+    // For each result in the JSON output from the Yelp API,
+    // display the information to match the HTML/CSS formatting I specified
+    function displayResults() {
+
+        //Here is the form of the HTML to be formatted correctly:
+        /*<div class="imgHolder"> <img class="restaurantPic" src="https://s3-media1.fl.yelpcdn.com/bphoto/N_5acEL5lQONzfu8G3RFiA/o.jpg"></div>
+        <div class="contentHolder">
+            <div><a class="restaurantName" href="https://www.yelp.com/biz/fricanos-deli-austin-15?adjust_creative=RGGnPrwZxPCJp56LrKgMKw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=RGGnPrwZxPCJp56LrKgMKw">Fricanos</a>
+            </div>
+            <div>
+                <div class="star-ratings-sprite"><span style="width:80%" class="star-ratings-sprite-rating"></span></div><span class="reviewCount">500</span></div>
+            <p><span class="price">$ | </span> <span class="category">Sandwiches, Deli</span></p>
+            <div class="location"><span>0.4 mi. | </span> <a href="https://www.google.com/maps/place/2405 Nueces St" class="restaurantAddress">2405 Nueces St</a></div>
+             <p class="phoneNumber">972-869-3429</p>
+        </div>*/
+
+        //Loop through each business and match the formatting correctly
+        for (let i = 0; i < businesses.length; i++) {
+            let phoneNumber = document.createElement("p");
+            phoneNumber.className = "phoneNumber";
+            phoneNumber.innerText = businesses[i].display_phone;
+            let distance = document.createElement("span");
+            let distanceMiles = businesses[i].distance * 0.000621371;
+            let roundedDistance = Math.round(distanceMiles * 10) / 10;
+            distance.innerText = "" + roundedDistance + " mi. | ";
+            let location = document.createElement("a");
+            location.href = "https://www.google.com/maps/place/" + businesses[i].location.address1;
+            location.innerText = businesses[i].location.display_address[0] + ", " + businesses[i].location.display_address[1];
+            location.className = "restaurantAddress";
+            let locationDiv = document.createElement("div");
+            locationDiv.className = "location";
+            locationDiv.appendChild(distance);
+            locationDiv.appendChild(location);
+            /* <div>
+                <div class="star-ratings-sprite"><span style="width:80%" class="star-ratings-sprite-rating"></span></div><span class="reviewCount">500</span></div>*/
+            let ratingsDiv = document.createElement("div");
+            let starDiv = document.createElement("div");
+            starDiv.className = "star-ratings-sprite";
+            let starSpan = document.createElement("span");
+            starSpan.className = "star-ratings-sprite-rating";
+            let rating = (businesses[i].rating / 5.0) * 100;
+            starSpan.style.width = rating + "%";
+            starDiv.appendChild(starSpan);
+            let reviewCount = document.createElement("span");
+            reviewCount.className = "reviewCount";
+            reviewCount.innerText = businesses[i].review_count;
+            ratingsDiv.appendChild(starDiv);
+            ratingsDiv.appendChild(reviewCount);
+            let categoryP = document.createElement("p");
+            let spanPrice = document.createElement("span");
+            spanPrice.innerText = businesses[i].price + " | ";
+            spanPrice.className = "price";
+            let spanCategories = document.createElement("span");
+            spanCategories.className = "category";
+            let categoryString = "";
+            for (let C in businesses[i].categories) {
+                categoryString += (businesses[i].categories[C].title + ", ")
+            }
+            spanCategories.innerText = categoryString.substr(0, categoryString.length - 2);
+
+            categoryP.appendChild(spanPrice);
+            categoryP.appendChild(spanCategories);
+
+            /*   <div><a class="restaurantName" href="https://www.yelp.com/biz/fricanos-deli-austin-15?adjust_creative=RGGnPrwZxPCJp56LrKgMKw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=RGGnPrwZxPCJp56LrKgMKw">Fricanos</a>
+            </div>*/
+            let restaurantNameDiv = document.createElement("div");
+            let restaurantNameA = document.createElement("a");
+            restaurantNameA.href = businesses[i].url;
+            restaurantNameA.className = "restaurantName";
+            restaurantNameA.innerText = (i + 1) + ". " + businesses[i].name;
+            restaurantNameDiv.appendChild(restaurantNameA);
+            let contentHolderDiv = document.createElement("div");
+            contentHolderDiv.className = "contentHolder";
+            contentHolderDiv.appendChild(restaurantNameDiv);
+            contentHolderDiv.appendChild(ratingsDiv);
+            contentHolderDiv.appendChild(categoryP);
+            contentHolderDiv.appendChild(locationDiv);
+            contentHolderDiv.appendChild(phoneNumber);
+            let imgHolderDiv = document.createElement("div");
+            imgHolderDiv.className = "imgHolder";
+            let img = document.createElement("img");
+            img.className = "restaurantPic";
+            img.src = businesses[i].image_url;
+            imgHolderDiv.appendChild(img);
+            let containerDiv = document.createElement("div");
+            containerDiv.className = "container card";
+            containerDiv.appendChild(imgHolderDiv);
+            containerDiv.appendChild(contentHolderDiv);
+            document.getElementById("resultsContainer").appendChild(containerDiv);
+        }
+    }
+
+    // Initialize and add the map: Code found modified from https://developers.google.com/maps/documentation/javascript/adding-a-google-map?hl=ru
+    function initMap() {
+        // The location of the User
+        let currentLocation = {
+            lat: restaurantResults.region.center.latitude,
+            lng: restaurantResults.region.center.longitude
+        };
+        // The map, centered at the user's location
+        let zoomLevel = 10;
+        if (parseInt({{ radiusMiles }}) == 1) {
+            zoomLevel = 14; //1 mile radius
+        } else if (parseInt({{ radiusMiles }}) == 5) {
+            zoomLevel = 12; //4 mile radius
+        } else if (parseInt({{ radiusMiles }}) == 10) {
+            zoomLevel = 11; //8 mile radius
+        } else if (parseInt({{ radiusMiles }}) == 20) {
+            zoomLevel = 10; //16 mile radius
+        }
+
+        let map = new google.maps.Map(
+            document.getElementById('map'), {zoom: zoomLevel, center: currentLocation});
+        //Array to hold all the markers
+        let markerArr = [];
+        //Fit the bounds to fit the map to all of the given results
+        // Code found from: https://stackoverflow.com/questions/1556921/google-map-api-v3-set-bounds-and-center
+        let bounds = new google.maps.LatLngBounds();
+
+        //For each restaurant, add a marker and label. Also update bounds to include the marker.
+        for (let i = 0; i < businesses.length; i++) {
+            let restaurantLocation = {
+                lat: businesses[i].coordinates.latitude,
+                lng: businesses[i].coordinates.longitude
+            };
+            let restaurantTitle = businesses[i].name;
+            let labelLetter = restaurantTitle.charAt(0)
+            let marker = new google.maps.Marker({
+                position: restaurantLocation,
+                map: map,
+                title: businesses[i].name,
+                label: "" + (i + 1)
+            });
+            let infowindow = new google.maps.InfoWindow({
+                content: restaurantTitle
+            });
+            //Show label when hover
+            marker.addListener('mouseover', function () {
+                infowindow.open(map, this);
+            });
+            //Don't show label when not hovering
+            marker.addListener('mouseout', function () {
+                infowindow.close();
+            });
+            markerArr.push(marker);
+            bounds.extend(restaurantLocation)
+        }
+        map.fitBounds(bounds);
+    }
+
+    //Function to search results when the search filters are changed
+    function searchResults() {
+        let currURL = window.location.href;
+        let distance = document.getElementById("distance").value;
+        let price = document.getElementById("price").value;
+        let sortBy = document.getElementById("sortBy").value;
+        let priceLoc = currURL.indexOf("price");
+        let newStr = currURL.substring(0, priceLoc);
+        newStr = newStr + "price=" + price + "&distance=" + distance + "&sort_by=" + sortBy;
+        window.location.href = newStr;
+    }
+</script>
+<!--Load the API from the specified URL
+* The async attribute allows the browser to render the page while the API loads
+* The key parameter will contain your own API key (which is not needed for this tutorial)
+* The callback parameter executes the initMap() function
+-->
+<script async defer
+<<<<<<< HEAD
+        src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&callback=initMap">
+=======
+        src="https://maps.googleapis.com/maps/api/js?key=GMAP_API_KEY&callback=initMap">
+>>>>>>> origin/master
+</script>
+</body>
+</html>

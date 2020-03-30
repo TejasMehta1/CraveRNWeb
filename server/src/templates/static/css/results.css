@@ -1,0 +1,122 @@
+#map {
+    height: 100%;
+    width: 50%;
+    float: right;
+    position: fixed!important;
+    overflow: hidden!important;
+    left: 50%;
+}
+
+
+.row{
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+    top: 0px;
+    left: 10px;
+    color:white;
+    padding-top: 1em;
+    background: dodgerblue;
+    border-bottom-right-radius: 2em;
+    border-bottom-left-radius: 2em;
+}
+
+.resultsAndMap{
+    margin-top: 50px;
+    display: flex;
+}
+
+.headerOption{
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+.updateButton{
+    margin-left: 10px;
+    border-radius: 1em;
+}
+
+select{
+    border-radius: 1em;
+}
+
+.col-sm-4{
+    display: -webkit-box;
+}
+
+body{
+    background-color: #EEE;
+}
+
+#resultsContainer{
+     float: left;
+    width: 50%;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.restaurantPic{
+    width: 175px;
+    height: 175px;
+    border-radius: 10px;
+}
+a{
+    text-decoration: none;
+}
+
+.imgHolder{
+    float: left;
+}
+.contentHolder{
+    float: left;
+    padding-left: 1em;
+}
+
+.restaurantName{
+    font-size: 2em;
+}
+
+.card{
+    flex-direction: unset !important;
+    height: 200px;
+    width: 80%;
+    padding: 1em;
+    background-color: white;
+    border-radius: 1em;
+    margin-bottom: 1em;
+    box-shadow: 0px 0px 15px lightslategrey;
+}
+
+.star-ratings-sprite {
+  background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
+  font-size: 0;
+  height: 21px;
+  line-height: 0;
+  overflow: hidden;
+  text-indent: -999em;
+  width: 110px;
+  margin: 0 auto;
+    float: left;
+}
+.star-ratings-sprite-rating {
+    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
+    background-position: 0 100%;
+    float: left;
+    height: 21px;
+    display:block;
+  }
+
+.reviewCount{
+    font-size: 1.25em;
+    padding-left: .5em;
+    color: slategray;
+}
+.price{
+    color: slategray;
+}
+
+.category{
+    color: slategray;
+}
+
+.phoneNumber{
+
+}
